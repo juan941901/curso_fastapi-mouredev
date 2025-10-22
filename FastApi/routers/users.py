@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # Creación clase con BaseModel para manipulación de datos
@@ -17,16 +17,16 @@ users_list = [User(id=1, name="Juan", surname="David", url="kajubyte.com", age=3
               User(id=2, name="maria", surname="camila", url="maxilusiones.com", age=30)]
 
 # Instanciamos FastAPI
-app = FastAPI()
+router = APIRouter()
 
 # Endpoint de tipo get para devolver la lista de usuarios
-@app.get("/get_users")
+@router.get("/get_users")
 async def get_users():
     return users_list
 
 # Endpoint de tipo get para devolver un usuario por id
 # colocamos el id como parte del path
-@app.get("/get_user/{id}")
+@router.get("/get_user/{id}")
 async def get_user(id: int):
     # Filtramos la lista de usuarios por id
     user = filter(lambda user: user.id == id, users_list)
@@ -43,7 +43,7 @@ async def get_user(id: int):
 # usar el signo de interrogación (?) para enviar datos
 # y debemos colocar el mismo nombre del parámetro en la URL
 # para este ejemplo es "id"
-@app.get("/user_query/")
+@router.get("/user_query/")
 async def user_query(id: int):
     # Filtramos la lista de usuarios por id
     user = filter(lambda user: user.id == id, users_list)
@@ -58,7 +58,7 @@ async def user_query(id: int):
 
 # Endpoint para crear un usuario en el modelo, usando
 # el método POST
-@app.post("/user/", status_code=201)
+@router.post("/user/", status_code=201)
 async def user(user: User):
     if type(search_user(user.id)) == User:
         raise HTTPException(status_code=404, detail="El usuario ya existe")
@@ -68,7 +68,7 @@ async def user(user: User):
 
 # Endpoint para actualizar un usuario en el modelo, usando
 # el método PUT
-@app.put("/user/")
+@router.put("/user/")
 async def user(user: User):
 
     found = False
@@ -85,7 +85,7 @@ async def user(user: User):
 
 # Endpoint para eliminar un usuario en el modelo, usando
 # el método DELETE
-@app.delete("/user/{id}", status_code=204)
+@router.delete("/user/{id}", status_code=204)
 async def user(id: int):
 
     found = False
