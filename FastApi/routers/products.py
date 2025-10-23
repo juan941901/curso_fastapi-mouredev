@@ -17,7 +17,11 @@ products_list = [Product(id=1, name="Laptop", description="A high-end laptop", p
                  Product(id=2, name="Smartphone", description="A latest model smartphone", price=800.00, in_stock=False)]
 
 # Instanciamos FastAPI
-router = APIRouter()
+router = APIRouter(
+    prefix="/products", # Prefijo para todas las rutas en este router
+    tags=["products"], # Etiquetas para la documentación
+    responses={404: {"message": "No encontrado"}} # Respuestas personalizadas
+)
 
 # Endpoint de tipo get para devolver la lista de productos
 @router.get("/get_products")
