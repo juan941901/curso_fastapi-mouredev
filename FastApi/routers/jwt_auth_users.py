@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+from passlib.context import CryptContext
+
 
 router = APIRouter(
-    prefix="/autoh_basic",
-    tags=["autoh_basic"],
-    responses={404: {"message": "No encontrado"}}
+    prefix="/jwt-auth-users",
+    tags=["jwt-auth-users"]
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="autoh_basic")
@@ -41,7 +44,7 @@ def search_user_db(username: str):
         return UserInDB(**users_db[username])
     return None
 
-@router.post("/autoh_basic")
+@router.post("/jwt_auth_users")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_dict = users_db.get(form_data.username)
     if not user_dict:
